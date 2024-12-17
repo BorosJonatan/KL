@@ -53,12 +53,12 @@ if (!isset($_GET['class'])) {
                 }
                 break;
             case 'class_averages':
-                $data = calculateClassAverages($school);
-                showClassAverages($data);
+                $classAverages = calculateClassAverages($school);
+                showClassAverages($classAverages);
                 if (!empty($_POST['save'])) {
                     switch ($_POST['save']){
                         case 'class_average':
-                            saveClassAverages($data);
+                            saveClassAverages($classAverages);
                             break;
                         default:
                             echo "<p>Ismeretlen</p>";
@@ -105,9 +105,30 @@ if (!isset($_GET['class'])) {
         }
     }
 } elseif ($_GET['class'] == 'student_averages') {
-    showStudentAverage(getStudentAverage($school));
+    $data = getStudentAverage($school);
+    showStudentAverage($data);
+    if (!empty($_POST['save'])) {
+        switch ($_POST['save']){
+            case 'student_average':
+                saveStudentAverages($data);
+                break;
+            default:
+                echo "<p>Ismeretlen</p>";
+        }
+    }
 } elseif ($_GET['class'] == 'worstbest'){
-    showBestAndWorstClasses($school);
+    $classAverages = calculateClassAverages($school);
+    $results = findBestAndWorstClasses($classAverages);
+    showBestAndWorstClasses($results, $classAverages);
+    if (!empty($_POST['save'])) {
+        switch ($_POST['save']){
+            case 'best_worst_average':
+                saveBestAndWorst($classAverages, $results);
+                break;
+            default:
+                echo "<p>Ismeretlen</p>";
+        }
+    }
 }
 else {
     showAllClasses($school, $classSelected);

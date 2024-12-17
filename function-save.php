@@ -89,5 +89,60 @@ function saveClassRanking($ranking){
 }
 
 function saveStudentAverages($data){
-    
+    $file = makeFile('student_averages', 'student_averages.csv');
+    fputs($file, encoding());
+    $subjects = getData('subjects');
+    $header = ["Név"];
+    foreach ($subjects as $subject){
+        $header[] = $subject;
+    }
+    fputcsv($file, $header, ";");
+    foreach($data as $student){
+        $array = [];
+        $array[] = $student['name'];
+        foreach ($subjects as $subject){
+            $array[] = $student['average'][$subject];
+        }
+        fputcsv($file, $array, ';');
+    }
+    fclose($file);
+}
+
+function saveBestAndWorst($classAverages, $results){
+
+    if (!is_dir("export\\best_worst_class")) {
+        mkdir("export\\best_worst_class");
+    }
+    $file = makeFile('best_worst_class', 'best_overall.csv');
+    fputs($file, encoding());
+    $subjects = getData('subjects');
+    fputcsv($file,["Osztály", "Átlag"],  ";");
+    fputcsv($file, [$results['overall']['best'], $classAverages[$results['overall']['best']]['overall']], ";");
+    fclose($file);
+
+    $file = makeFile('best_worst_class', 'worst_overall.csv');
+    fputs($file, encoding());
+    $subjects = getData('subjects');
+    fputcsv($file,["Osztály", "Átlag"],  ";");
+    fputcsv($file, [$results['overall']['worst'], $classAverages[$results['overall']['worst']]['overall']], ";");
+    fclose($file);
+
+    foreach ($subjects as $subject){
+        if (!is_dir("export\\best_worst_class\\" . $subject)) {
+            mkdir("export\\best_worst_class\\" . $subject);
+        }
+        $file = makeFile("best_worst_class\\" . $subject, 'best.csv');
+        fputs($file, encoding());
+        $subjects = getData('subjects');
+        fputcsv($file,["Osztály", "Átlag"],  ";");
+        fputcsv($file, [$results['subjects'][$subject]['best'], $classAverages[$results['subjects'][$subject]['best']]['subjects'][$subject]], ";");
+        fclose($file);
+
+        $file = makeFile("best_worst_class\\" . $subject, 'worst.csv');
+        fputs($file, encoding());
+        $subjects = getData('subjects');
+        fputcsv($file,["Osztály", "Átlag"],  ";");
+        fputcsv($file, [$results['subjects'][$subject]['worst'], $classAverages[$results['subjects'][$subject]['worst']]['subjects'][$subject]], ";");
+        fclose($file);
+    }
 }

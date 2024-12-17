@@ -181,6 +181,11 @@ function showClassRanking($ranking) {
 
     foreach ($ranking['classes'] as $clName => $class) {
         echo "<h2>Osztály: $clName</h2>";
+        echo "<button style='' class='toggle-btn' onclick=\"toggleVisibility('" . $clName . "class-overall')\">
+        Összesített táblázat megjelenítése/elrejtése
+        </button>";
+
+        echo "<div id='" . $clName . "class-overall' class='dropdown-content hidden'>";
         echo "<h3>Összesített rangsor:</h3>";
 
         echo "<table>";
@@ -190,6 +195,18 @@ function showClassRanking($ranking) {
             echo "<tr><td>" . ($i + 1) . "</td><td>{$student['name']}</td><td>{$average}</td></tr>";
         }
         echo "</table>";
+        echo "</div>";
+        echo "<script>
+        function toggleVisibility(id) {
+            const element = document.getElementById(id);
+            if (element.classList.contains('hidden')) {
+                element.classList.remove('hidden');
+            } else {
+                element.classList.add('hidden');
+            }
+        }
+    </script>";
+
         echo "<div class='table-container'>";
         foreach ($class['subjects'] as $subject => $students) {
             echo "<div class='table-group'>";
@@ -209,10 +226,10 @@ function showClassRanking($ranking) {
 }
 
 function showSchoolRanking($ranking) {
+    echo "<h3>Egész iskola rangsora</h3>";
     echo "<button class='toggle-btn' onclick=\"toggleVisibility('school-overall')\">
             Összesített táblázat megjelenítése/elrejtése
         </button>";
-    echo "<h3>Egész iskola rangsora</h3>";
     
     // Összesített rangsor megjelenítése
 
@@ -300,6 +317,7 @@ function showStudentAverage($averages){
         echo "</tr>";
     }
     echo "</table>";
+    showStudentAveragesSave();
 }
 
 function findBestAndWorstClasses($classAverages) {
@@ -359,8 +377,7 @@ function findBestAndWorstClasses($classAverages) {
 }
 
 
-function showBestAndWorstClasses($school) {
-    $classAverages = calculateClassAverages($school);
+function showBestAndWorstClasses($school, $classAverages) {
     $results = findBestAndWorstClasses($classAverages);
     $subjects = getData('subjects');
 
@@ -388,4 +405,5 @@ function showBestAndWorstClasses($school) {
         echo "</div>";
     }
     echo "</div>";
+    showBestAndWorstSave();
 }
